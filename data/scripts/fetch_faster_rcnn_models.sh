@@ -3,6 +3,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 cd $DIR
 
+
 NET=res101
 FILE=voc_0712_80k-110k.tgz
 # replace it with gs11655.sp.cs.cmu.edu if ladoga.graphics.cs.cmu.edu does not work

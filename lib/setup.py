@@ -33,7 +33,7 @@ def locate_cuda():
 
     # first check if the CUDAHOME env variable is in use
     if 'CUDAHOME' in os.environ:
-        home = os.environ['CUDAHOME']
+        home = os.environ['CUDA_HOME']
         nvcc = pjoin(home, 'bin', 'nvcc')
     else:
         # otherwise, search the PATH for NVCC
