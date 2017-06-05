@@ -56,15 +56,19 @@ class vgg16(Network):
                                   weights_initializer=initializer,
                                   padding='VALID', activation_fn=None, scope='rpn_cls_score')
       # change it so that the score has 2 as its channel size
-      rpn_cls_score_reshape = self._reshape_layer(rpn_cls_score, 2, 'rpn_cls_score_reshape')
+      print(tf.shape(rpn_cls_score))
+      rpn_cls_score_reshape = self._reshape_layer(rpn_cls_score, 2, 'rpn_cls_score_reshape') # #batch size, 9*width,  anchors, height, 2
+      print(tf.shape(rpn_cls_score_reshape))
       rpn_cls_prob_reshape = self._softmax_layer(rpn_cls_score_reshape, "rpn_cls_prob_reshape")
-      rpn_cls_prob = self._reshape_layer(rpn_cls_prob_reshape, self._num_anchors * 2, "rpn_cls_prob")
+      rpn_cls_prob = self._reshape_layer(rpn_cls_prob_reshape, self._num_anchors * 2, "rpn_cls_prob") #batchsize, ...., 18
+      print(tf.shape(rpn_cls_prob))
+      print("------------")
       rpn_bbox_pred = slim.conv2d(rpn, self._num_anchors * 4, [1, 1], trainable=is_training,
                                   weights_initializer=initializer,
                                   padding='VALID', activation_fn=None, scope='rpn_bbox_pred')
       if is_training:
         rois, roi_scores = self._proposal_layer(rpn_cls_prob, rpn_bbox_pred, "rois")
-        rpn_labels = self._anchor_target_layer(rpn_cls_score, "anchor")
+        rpn_labels = self._anchor_target_layer(rpn_cls_score, "anchor") #set_shape([1, 1, None, None])
         # Try to have a determinestic order for the computing graph, for reproducibility
         with tf.control_dependencies([rpn_labels]):
           rois, _ = self._proposal_target_layer(rois, roi_scores, "rpn_rois")

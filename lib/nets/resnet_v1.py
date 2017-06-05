@@ -183,6 +183,7 @@ class resnetv1(Network):
                                   weights_initializer=initializer,
                                   padding='VALID', activation_fn=None, scope='rpn_cls_score')
       # change it so that the score has 2 as its channel size
+
       rpn_cls_score_reshape = self._reshape_layer(rpn_cls_score, 2, 'rpn_cls_score_reshape')
       rpn_cls_prob_reshape = self._softmax_layer(rpn_cls_score_reshape, "rpn_cls_prob_reshape")
       rpn_cls_prob = self._reshape_layer(rpn_cls_prob_reshape, self._num_anchors * 2, "rpn_cls_prob")

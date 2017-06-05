@@ -130,26 +130,32 @@ if __name__ == '__main__':
     tfconfig.gpu_options.allow_growth=True
 
     # init session
-    sess = tf.Session(config=tfconfig)
-    # load network
-    if demonet == 'vgg16':
-        net = vgg16(batch_size=1)
-    elif demonet == 'res101':
-        net = resnetv1(batch_size=1, num_layers=101)
-    else:
-        raise NotImplementedError
-    net.create_architecture(sess, "TEST", 21,
-                          tag='default', anchor_scales=[8, 16, 32])
-    saver = tf.train.Saver()
-    saver.restore(sess, tfmodel)
+    with tf.Session(config=tfconfig) as sess:
+        # load network
+        if demonet == 'vgg16':
+            net = vgg16(batch_size=1)
+        elif demonet == 'res101':
+            net = resnetv1(batch_size=1, num_layers=101)
+        else:
+            raise NotImplementedError
+        net.create_architecture(sess, "TEST", 21,
+                              tag='default', anchor_scales=[8, 16, 32])
+        saver = tf.train.Saver()
+        saver.restore(sess, tfmodel)
 
-    print('Loaded network {:s}'.format(tfmodel))
+        print('Loaded network {:s}'.format(tfmodel))
 
-    im_names = ['000456.jpg', '000542.jpg', '001150.jpg',
-                '001763.jpg', '004545.jpg']
-    for im_name in im_names:
-        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-        print('Demo for data/demo/{}'.format(im_name))
-        demo(sess, net, im_name)
+        #im_names = ['000456.jpg', '000542.jpg', '001150.jpg', '001763.jpg', '004545.jpg']
+        im_names = ['000456.jpg']
+        for im_name in im_names:
+            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+            print('Demo for data/demo/{}'.format(im_name))
+            demo(sess, net, im_name)
 
-    plt.show()
+        print(net._predictions["rpn_cls_score"].get_shape())
+        print(net._predictions["rpn_cls_score_reshape"].get_shape())
+        print(net._predictions["rpn_cls_prob"].get_shape())
+        print(net._predictions["rpn_bbox_pred"].get_shape())
+        print(net._predictions["rpn"].get_shape())
+
+        plt.show()
