@@ -103,7 +103,6 @@ class stairs(imdb):
           roidb = pickle.load(fid, encoding='bytes')
       print('{} gt roidb loaded from {}'.format(self.name, cache_file))
       return roidb
-
     gt_roidb = [self._load_stairs_annotation(index)
                 for index in self.image_index]
     with open(cache_file, 'wb') as fid:
@@ -198,7 +197,6 @@ class stairs(imdb):
         continue
       print('Writing {} stairs results file'.format(cls))
       filename = self._get_stairs_results_file_template().format(cls)
-
       with open(filename, 'wt') as f:
         for im_ind, index in enumerate(self.image_index):
           dets = all_boxes[cls_ind][im_ind]

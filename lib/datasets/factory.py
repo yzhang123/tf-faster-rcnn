@@ -16,7 +16,7 @@ __sets = {}
 from datasets.stairs import stairs
 import numpy as np
 
-# Set up voc_<year>_<split> 
+# Set up voc_<year>_<split>
 #for year in ['2007', '2012']:
 #  for split in ['train', 'val', 'trainval', 'test']:
 #    name = 'voc_{}_{}'.format(year, split)
@@ -35,7 +35,7 @@ import numpy as np
 #    __sets[name] = (lambda split=split, year=year: coco(split, year))
 
 # Set up stairs_<split>
-for split in ['train', 'val', 'trainval']:
+for split in ['trainval', 'test']:
   name = 'stairs_{}'.format(split)
   __sets[name] = (lambda split=split: stairs(split))
 

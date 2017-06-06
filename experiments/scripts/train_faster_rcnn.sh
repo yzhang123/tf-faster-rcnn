@@ -41,7 +41,7 @@ case ${DATASET} in
     ;;
   stairs)
     TRAIN_IMDB="stairs_trainval"
-    TEST_IMDB="stairs_trainval"
+    TEST_IMDB="stairs_test"
     STEPSIZE=350000
     ITERS=490000
     ANCHORS="[4,8,16,32]"
