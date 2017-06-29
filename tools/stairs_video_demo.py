@@ -33,7 +33,7 @@ from nets.resnet_v1 import resnetv1
 
 CLASSES = ('__background__', 'stairs')
 
-NETS = {'vgg16': ('vgg16_faster_rcnn_iter_15000.ckpt',),'res101': ('res101_faster_rcnn_iter_110000.ckpt',)}
+NETS = {'vgg16': ('vgg16_faster_rcnn_iter_30000.ckpt',),'res101': ('res101_faster_rcnn_iter_110000.ckpt',)}
 DATASETS= {'pascal_voc': ('voc_2007_trainval',),'pascal_voc_0712': ('voc_2007_trainval+voc_2012_trainval',), 'stairs': ('stairs_trainval')}
 
 def vis_detections(im, class_name, dets, thresh=0.5):
@@ -105,6 +105,11 @@ if __name__ == '__main__':
     length = int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT))
     i = 0
     
+    fps = cap.get(cv2.cv.CV_CAP_PROP_FPS)
+    
+    fourcc = cv2.cv.CV_FOURCC(*'XVID')
+    out = cv2.VideoWriter('/tmp/output.avi', fourcc, fps / 5, (640,480))
+    
     def onChange(trackbarValue):
         cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, trackbarValue)
         err,img = cap.read()
@@ -120,9 +125,12 @@ if __name__ == '__main__':
     while(cap.isOpened()):
 		ret, frame = cap.read()
 		
-		if i % 10 == 0:
+		if i % 5 == 0:
 			cv2.setTrackbarPos('frame', 'stair detection', int(cap.get(1)))
 			"""Detect object classes in an image using pre-computed object proposals."""
+			
+			copy = frame.copy()
+			frame = cv2.resize(copy, (640,480)) 
 
 			# Detect all object classes and regress object bounds
 			timer = Timer()
@@ -134,6 +142,7 @@ if __name__ == '__main__':
 			# Visualize detections for each class
 			CONF_THRESH = 0.8
 			NMS_THRESH = 0.3
+			
 			for cls_ind, cls in enumerate(CLASSES[1:]):
 				cls_ind += 1 # because we skipped background
 				cls_boxes = boxes[:, 4*cls_ind:4*(cls_ind + 1)]
@@ -143,6 +152,8 @@ if __name__ == '__main__':
 				keep = nms(dets, NMS_THRESH)
 				dets = dets[keep, :]
 				vis_detections(frame, cls, dets, thresh=CONF_THRESH)
+				
+			out.write(frame)
 
 			cv2.imshow('stair detection',frame)
 			if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -151,6 +162,7 @@ if __name__ == '__main__':
 		i += 1
 
     cap.release()
+    out.release()
     cv2.destroyAllWindows()
 
     plt.show()
